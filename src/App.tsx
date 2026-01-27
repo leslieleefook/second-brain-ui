@@ -9,6 +9,24 @@ import type { BrainData } from './types';
 import './App.css';
 
 type Mode = 'view' | 'edit';
+type Theme = 'dark' | 'light';
+
+const THEME_KEY = 'second-brain-theme';
+
+// Get initial theme from localStorage or system preference
+function getInitialTheme(): Theme {
+  try {
+    const stored = localStorage.getItem(THEME_KEY) as Theme | null;
+    if (stored === 'dark' || stored === 'light') return stored;
+  } catch (e) {
+    console.warn('Failed to read theme preference', e);
+  }
+  // Check system preference
+  if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+    return 'light';
+  }
+  return 'dark';
+}
 
 function App() {
   const [brain, setBrain] = useState<BrainData | null>(null);
@@ -19,6 +37,21 @@ function App() {
   const [apiAvailable, setApiAvailable] = useState<boolean | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [folders, setFolders] = useState<string[]>([]);
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  
+  // Apply theme to document
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch (e) {
+      console.warn('Failed to save theme preference', e);
+    }
+  }, [theme]);
+  
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  }, []);
   
   // Check if API server is running
   useEffect(() => {
@@ -223,6 +256,13 @@ function App() {
             </button>
           )}
         </div>
+        <button 
+          className="theme-toggle"
+          onClick={toggleTheme}
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
         <div className="header-stats">
           <span className={`api-status ${apiAvailable ? 'online' : 'offline'}`}>
             {apiAvailable ? '🟢' : '🔴'}
