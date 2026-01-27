@@ -9,7 +9,7 @@ import path from 'path';
 import { glob } from 'glob';
 import matter from 'gray-matter';
 
-const BRAIN_PATH = process.env.BRAIN_PATH || 'P:/Clawdbot/brain';
+const BRAIN_PATH = process.env.BRAIN_PATH || 'C:/Users/LeslieLeeFook/clawd/brain';
 const OUTPUT_PATH = './public/brain.json';
 
 // Extract wiki-style links [[Link Name]]

@@ -1,148 +1,161 @@
 # 🧠 Second Brain UI
 
-A beautiful, minimal web interface for browsing your markdown-based knowledge base. Features include:
+A beautiful web interface for browsing, searching, and editing your Second Brain knowledge base.
 
-- 📂 **File tree navigation** - Browse your notes by folder structure
-- 🔍 **Full-text search** - Search across all notes by title, content, and tags
-- 🔗 **Wiki-style links** - Click `[[links]]` to navigate between notes
-- ↩️ **Backlinks** - See which notes link to the current one
-- 🏷️ **Tag support** - Hashtags are highlighted and searchable
-- 🌙 **Dark mode** - Easy on the eyes, always
+![Dark Theme](https://img.shields.io/badge/theme-dark-1a1a2e)
+![React](https://img.shields.io/badge/React-19-61dafb)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6)
+
+## Features
+
+- 📁 **File Tree Browser** - Navigate your knowledge base with a familiar folder structure
+- 🔍 **Full-Text Search** - Find notes by title, content, or tags
+- 🔗 **Wiki Links** - Click `[[links]]` to navigate between notes
+- ↩️ **Backlinks** - See which notes reference the current note
+- ✏️ **Edit Mode** - Edit notes directly in the browser
+- ➕ **Create Notes** - Add new notes to any folder
+- 🏷️ **Tags Support** - View and search by hashtags
+- 🌙 **Dark Theme** - Easy on the eyes
 
 ## Quick Start
+
+### Static Mode (Read-Only)
 
 ```bash
 # Install dependencies
 npm install
 
-# Build brain data from your markdown folder
+# Build brain data from markdown files
 npm run build:brain
 
-# Start development server
+# Start dev server
+npm run dev
+```
+
+### Full Mode (With Editing)
+
+```bash
+# Install dependencies
+npm install
+
+# Start both API server and frontend
+npm run dev:full
+```
+
+Or run them separately:
+
+```bash
+# Terminal 1: API Server
+npm run server
+
+# Terminal 2: Frontend
 npm run dev
 ```
 
 ## Configuration
 
-By default, the build script reads from `P:/Clawdbot/brain`. To use a different folder:
+### Brain Path
 
+By default, the build script reads from `C:/Users/LeslieLeeFook/clawd/brain`.
+
+Override with environment variable:
 ```bash
-# Set environment variable before building
-$env:BRAIN_PATH = "C:/path/to/your/notes"
-npm run build:brain
+BRAIN_PATH=/path/to/your/brain npm run build:brain
 ```
 
-## Deployment to GitHub Pages
+### API Server
 
-### Option 1: Manual Deploy
+The API server runs on port 3001 by default. The frontend expects it at `http://localhost:3001/api`.
+
+Override with environment variable:
+```bash
+PORT=3002 npm run server
+```
+
+Frontend configuration (create `.env.local`):
+```
+VITE_API_URL=http://localhost:3002/api
+```
+
+## Project Structure
+
+```
+second-brain-ui/
+├── public/
+│   └── brain.json        # Generated from markdown files
+├── server/
+│   └── index.js          # Express API for editing
+├── scripts/
+│   └── build-brain.js    # Converts markdown to JSON
+├── src/
+│   ├── components/
+│   │   ├── FileTree.tsx      # Sidebar file browser
+│   │   ├── NoteViewer.tsx    # Markdown renderer
+│   │   ├── NoteEditor.tsx    # Edit mode
+│   │   ├── CreateNoteModal.tsx
+│   │   └── Search.tsx        # Full-text search
+│   ├── api.ts            # API client
+│   ├── types.ts          # TypeScript types
+│   ├── App.tsx           # Main app
+│   └── App.css           # Styles
+└── package.json
+```
+
+## Markdown Features
+
+### Wiki Links
+```markdown
+Link to another note: [[Note Title]]
+```
+
+### Tags
+```markdown
+Add tags anywhere: #project #idea #important
+```
+
+### Frontmatter
+```markdown
+---
+title: My Note Title
+tags: [project, important]
+created: 2026-01-27
+---
+
+Note content here...
+```
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/files` | List all markdown files |
+| GET | `/api/file/:path` | Get file content |
+| PUT | `/api/file/:path` | Update file |
+| POST | `/api/file` | Create new file |
+| DELETE | `/api/file/:path` | Delete file |
+| GET | `/api/folders` | List all folders |
+| GET | `/api/health` | Health check |
+
+## Development
 
 ```bash
-# Build everything
+# Run linter
+npm run lint
+
+# Build for production
 npm run build
 
-# The dist/ folder is ready to deploy
-# Upload dist/ contents to your GitHub Pages branch
+# Preview production build
+npm run preview
 ```
 
-### Option 2: Using gh-pages
+## Deploy to GitHub Pages
 
 ```bash
-# Install gh-pages
-npm install -D gh-pages
-
-# Deploy
 npm run deploy
 ```
 
-### Option 3: GitHub Actions
-
-Create `.github/workflows/deploy.yml`:
-
-```yaml
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          
-      - run: npm ci
-      - run: npm run build
-      
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
-```
-
-## Features
-
-### Wiki Links
-Use `[[Note Name]]` syntax to link between notes. The UI will:
-- Resolve links to matching files
-- Show backlinks at the bottom of each note
-- Highlight broken links in red
-
-### Tags
-Use `#tag` syntax anywhere in your notes. Tags are:
-- Displayed as chips in the note header
-- Searchable via the search bar
-- Highlighted in the content
-
-### File Structure
-The UI preserves your folder structure. Organize your notes however you like:
-
-```
-brain/
-├── inbox/           # Quick capture
-├── projects/        # Active work
-├── areas/           # Ongoing responsibilities
-├── resources/       # Reference material
-└── archive/         # Completed items
-```
-
-## Tech Stack
-
-- **React 19** - UI framework
-- **Vite** - Build tool
-- **TypeScript** - Type safety
-- **Marked** - Markdown parsing
-- **Gray Matter** - Frontmatter parsing
-
-## Scripts
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run build:brain` | Generate brain.json from markdown files |
-| `npm run preview` | Preview production build |
-| `npm run deploy` | Deploy to GitHub Pages |
+Note: GitHub Pages deployment is static (read-only mode). Edit functionality requires running the API server.
 
 ## License
 
