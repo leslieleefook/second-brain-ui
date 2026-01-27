@@ -1,8 +1,13 @@
 {
   "name": "second-brain-ui",
-  "private": true,
+  "private": false,
   "version": "1.0.0",
   "type": "module",
+  "homepage": "https://leslieleefook.github.io/second-brain-ui/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leslieleefook/second-brain-ui.git"
+  },
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "client": "vite",

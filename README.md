@@ -1,45 +1,72 @@
 # Second Brain UI 🧠
 
-A simple web interface to browse your Second Brain (markdown knowledge base).
+A beautiful web interface to browse your markdown knowledge base (Second Brain).
 
-## Features
+## 🚀 Live Demo
 
-- 📁 File tree navigation with collapsible folders
-- 🔍 Full-text search across all markdown files
-- 📝 Beautiful markdown rendering with GitHub Flavored Markdown support
-- 🔗 Wiki-style `[[link]]` support
-- 🌙 Dark theme (Tokyo Night inspired)
-- ⚡ Fast — built with Vite + React
+**[View Live Demo →](https://leslieleefook.github.io/second-brain-ui/)**
 
-## Setup
+The demo runs with sample content to showcase the features. Clone and run locally to connect your own markdown files.
+
+## ✨ Features
+
+- 📁 **File Tree Navigation** — Collapsible folders and files
+- 🔍 **Full-text Search** — Find anything instantly
+- 📝 **Markdown Rendering** — GitHub Flavored Markdown support
+- 🔗 **Wiki Links** — Support for `[[double bracket]]` links
+- 🌙 **Dark Theme** — Tokyo Night inspired aesthetics
+- ⚡ **Fast** — Built with Vite + React
+
+## 🛠️ Setup
+
+### Local Development (with API Server)
+
+Connect to your actual markdown files:
 
 ```bash
+# Clone the repo
+git clone https://github.com/leslieleefook/second-brain-ui.git
+cd second-brain-ui
+
 # Install dependencies
 npm install
 
-# Start development server (runs both frontend and API)
+# Edit server.js to point to your markdown folder
+# Default: P:\Clawdbot\brain
+
+# Start development server (frontend + API)
 npm run dev
 ```
 
 Open http://localhost:5173 to view the app.
 
-## Configuration
+### Demo Mode
 
-By default, the app serves files from `P:\Clawdbot\brain`. To change this, edit `server.js`:
+Run the frontend-only demo with sample content:
 
-```javascript
-const BRAIN_PATH = 'P:\\Clawdbot\\brain';
+```bash
+npm run client
 ```
 
-## Architecture
+## ⚙️ Configuration
 
-- **Frontend:** React 18 + Vite
-- **Backend:** Express.js API server
-- **Rendering:** react-markdown with remark-gfm
+Edit `server.js` to point to your markdown folder:
 
-The frontend runs on port 5173, and the API server runs on port 3001. Vite proxies `/api` requests to the backend.
+```javascript
+const BRAIN_PATH = 'P:\\Clawdbot\\brain';  // Change this!
+```
 
-## API Endpoints
+## 🏗️ Architecture
+
+| Layer | Tech | Port |
+|-------|------|------|
+| Frontend | React 18 + Vite | 5173 |
+| Backend | Express.js | 3001 |
+| Rendering | react-markdown + remark-gfm | — |
+
+The frontend proxies `/api` requests to the backend during development.
+
+## 📡 API Endpoints
 
 | Endpoint | Description |
 |----------|-------------|
@@ -47,6 +74,30 @@ The frontend runs on port 5173, and the API server runs on port 3001. Vite proxi
 | `GET /api/file/:path` | Get file content |
 | `GET /api/search?q=query` | Search files |
 
-## License
+## 🚀 Deployment
+
+### GitHub Pages (Demo Mode)
+
+This repo auto-deploys to GitHub Pages on push to `main`. The demo mode uses bundled sample content since the API server can't run on static hosting.
+
+### Self-Hosted (Full Mode)
+
+For full functionality with your own files:
+
+```bash
+# Build the frontend
+npm run build
+
+# Serve with the API server
+npm run server
+
+# Or use PM2, Docker, etc.
+```
+
+## 📄 License
 
 MIT
+
+---
+
+Made with 💜 by [Leslie Lee Fook](https://github.com/leslieleefook)
