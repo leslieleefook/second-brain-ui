@@ -39,9 +39,9 @@ app.get('/api/files', async (req, res) => {
 });
 
 // Get single file
-app.get('/api/file/*', async (req, res) => {
+app.get('/api/file/{*filePath}', async (req, res) => {
   try {
-    const relativePath = req.params[0];
+    const relativePath = req.params.filePath;
     const fullPath = validatePath(relativePath);
     
     const content = await fs.readFile(fullPath, 'utf-8');
@@ -63,9 +63,9 @@ app.get('/api/file/*', async (req, res) => {
 });
 
 // Save file
-app.put('/api/file/*', async (req, res) => {
+app.put('/api/file/{*filePath}', async (req, res) => {
   try {
-    const relativePath = req.params[0];
+    const relativePath = req.params.filePath;
     const fullPath = validatePath(relativePath);
     const { content, frontmatter } = req.body;
     
@@ -120,9 +120,9 @@ app.post('/api/file', async (req, res) => {
 });
 
 // Delete file
-app.delete('/api/file/*', async (req, res) => {
+app.delete('/api/file/{*filePath}', async (req, res) => {
   try {
-    const relativePath = req.params[0];
+    const relativePath = req.params.filePath;
     const fullPath = validatePath(relativePath);
     
     await fs.unlink(fullPath);

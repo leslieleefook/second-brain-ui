@@ -82,14 +82,18 @@ export function NoteViewer({ file, files, linkIndex, onNavigate }: NoteViewerPro
       
       {backlinkedFiles.length > 0 && (
         <div className="backlinks-section">
-          <h3>🔗 Backlinks ({backlinkedFiles.length})</h3>
-          <div className="backlinks-list">
+          <h3>
+            🔗 Linked from
+            <span className="backlink-count">{backlinkedFiles.length}</span>
+          </h3>
+          <div className="backlinks-grid">
             {backlinkedFiles.map(linked => (
               <div 
                 key={linked.id}
-                className="backlink-item"
+                className="backlink-card"
                 onClick={() => onNavigate(linked.id)}
               >
+                <span className="backlink-icon">← </span>
                 <span className="backlink-title">{linked.title}</span>
                 <span className="backlink-path">{linked.relativePath}</span>
               </div>

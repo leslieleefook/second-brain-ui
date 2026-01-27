@@ -4,6 +4,8 @@ import { Search } from './components/Search';
 import { NoteViewer } from './components/NoteViewer';
 import { NoteEditor } from './components/NoteEditor';
 import { CreateNoteModal } from './components/CreateNoteModal';
+import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
+import { GraphView } from './components/GraphView';
 import { api } from './api';
 import type { BrainData } from './types';
 import './App.css';
@@ -36,6 +38,8 @@ function App() {
   const [mode, setMode] = useState<Mode>('view');
   const [apiAvailable, setApiAvailable] = useState<boolean | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showShortcutsModal, setShowShortcutsModal] = useState(false);
+  const [showGraphView, setShowGraphView] = useState(false);
   const [folders, setFolders] = useState<string[]>([]);
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
   
@@ -52,6 +56,63 @@ function App() {
   const toggleTheme = useCallback(() => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   }, []);
+  
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts when typing in input fields
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      
+      const isMod = e.metaKey || e.ctrlKey;
+      
+      // ? - Show keyboard shortcuts
+      if (e.key === '?' && !isMod) {
+        e.preventDefault();
+        setShowShortcutsModal(prev => !prev);
+        return;
+      }
+      
+      // Mod+B - Toggle sidebar
+      if (isMod && e.key === 'b') {
+        e.preventDefault();
+        setSidebarOpen(prev => !prev);
+        return;
+      }
+      
+      // Mod+E - Edit current note
+      if (isMod && e.key === 'e' && selectedId && apiAvailable && mode === 'view') {
+        e.preventDefault();
+        setMode('edit');
+        return;
+      }
+      
+      // Mod+N - Create new note
+      if (isMod && e.key === 'n' && apiAvailable) {
+        e.preventDefault();
+        setShowCreateModal(true);
+        return;
+      }
+      
+      // Mod+G - Toggle graph view
+      if (isMod && e.key === 'g') {
+        e.preventDefault();
+        setShowGraphView(prev => !prev);
+        return;
+      }
+      
+      // Mod+\ - Toggle theme
+      if (isMod && e.key === '\\') {
+        e.preventDefault();
+        toggleTheme();
+        return;
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedId, apiAvailable, mode, toggleTheme]);
   
   // Check if API server is running
   useEffect(() => {
@@ -232,7 +293,7 @@ function App() {
             <button 
               className="btn btn-primary btn-sm"
               onClick={() => setShowCreateModal(true)}
-              title="Create new note"
+              title="Create new note (⌘N)"
             >
               + New
             </button>
@@ -241,7 +302,7 @@ function App() {
             <button 
               className="btn btn-secondary btn-sm"
               onClick={handleEdit}
-              title={apiAvailable ? 'Edit note' : 'API server not running'}
+              title={apiAvailable ? 'Edit note (⌘E)' : 'API server not running'}
             >
               ✏️ Edit
             </button>
@@ -255,6 +316,20 @@ function App() {
               🗑️
             </button>
           )}
+          <button 
+            className="btn btn-secondary btn-sm graph-btn"
+            onClick={() => setShowGraphView(true)}
+            title="Knowledge graph (⌘G)"
+          >
+            🕸️
+          </button>
+          <button 
+            className="btn btn-secondary btn-sm help-btn"
+            onClick={() => setShowShortcutsModal(true)}
+            title="Keyboard shortcuts (?)"
+          >
+            ⌨️
+          </button>
         </div>
         <button 
           className="theme-toggle"
@@ -296,6 +371,32 @@ function App() {
             />
           )}
         </main>
+        
+        {/* Mobile action bar */}
+        <div className="mobile-actions">
+          {apiAvailable && (
+            <button 
+              className="btn btn-primary"
+              onClick={() => setShowCreateModal(true)}
+            >
+              + New
+            </button>
+          )}
+          {selectedFile && mode === 'view' && apiAvailable && (
+            <button 
+              className="btn btn-secondary"
+              onClick={handleEdit}
+            >
+              ✏️ Edit
+            </button>
+          )}
+          <button 
+            className="btn btn-secondary"
+            onClick={() => setShowGraphView(true)}
+          >
+            🕸️ Graph
+          </button>
+        </div>
       </div>
       
       {showCreateModal && (
@@ -303,6 +404,23 @@ function App() {
           folders={folders}
           onClose={() => setShowCreateModal(false)}
           onCreate={handleCreate}
+        />
+      )}
+      
+      {showShortcutsModal && (
+        <KeyboardShortcutsModal onClose={() => setShowShortcutsModal(false)} />
+      )}
+      
+      {showGraphView && brain && (
+        <GraphView
+          files={brain.files}
+          linkIndex={brain.linkIndex}
+          selectedId={selectedId}
+          onSelect={(id) => {
+            handleSelect(id);
+            setShowGraphView(false);
+          }}
+          onClose={() => setShowGraphView(false)}
         />
       )}
     </div>

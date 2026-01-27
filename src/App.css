@@ -1189,6 +1189,220 @@ body {
   cursor: pointer;
 }
 
+/* Keyboard Shortcuts Modal */
+.keyboard-modal {
+  max-width: 450px;
+}
+
+.shortcuts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shortcut-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.shortcut-item:last-child {
+  border-bottom: none;
+}
+
+.shortcut-keys {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.shortcut-keys kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.key-separator {
+  color: var(--text-muted);
+  margin: 0 2px;
+}
+
+.shortcut-description {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.shortcuts-tip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--tag-bg);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.shortcuts-tip kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+/* Graph View */
+.graph-view-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+  animation: fadeIn 0.15s ease;
+}
+
+.graph-view-container {
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  max-height: 800px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.graph-view-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.graph-view-header h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.graph-stats {
+  display: flex;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-left: auto;
+  margin-right: 16px;
+}
+
+.graph-view-container canvas {
+  flex: 1;
+  display: block;
+}
+
+.graph-legend {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Enhanced Backlinks Section */
+.backlinks-section {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 48px;
+}
+
+.backlinks-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.backlink-count {
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.backlinks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+}
+
+.backlink-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backlink-card:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.backlink-card .backlink-icon {
+  font-size: 12px;
+  color: var(--accent-color);
+}
+
+/* Mobile-friendly action menu */
+.mobile-actions {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  padding: 12px 16px;
+  z-index: 90;
+  gap: 8px;
+}
+
+.mobile-actions .btn {
+  flex: 1;
+  justify-content: center;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .sidebar {
@@ -1198,22 +1412,45 @@ body {
     bottom: 0;
     z-index: 50;
     width: var(--sidebar-width);
+    transition: transform 0.2s ease;
   }
   
   .sidebar.closed {
     transform: translateX(-100%);
   }
   
+  .sidebar.open + .main-content {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  
   .main-content {
     padding: 16px;
+    padding-bottom: 80px;
   }
   
   .note-header h1 {
     font-size: 1.5rem;
   }
   
+  /* Show condensed header actions on mobile */
   .header-actions {
+    display: flex;
+    gap: 4px;
+  }
+  
+  .header-actions .btn {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  
+  .header-actions .btn:not(.graph-btn):not(.help-btn) {
     display: none;
+  }
+  
+  /* Mobile bottom action bar */
+  .mobile-actions {
+    display: flex;
   }
   
   .modal {
@@ -1222,6 +1459,72 @@ body {
   }
   
   .search-container {
-    max-width: 200px;
+    max-width: 180px;
+  }
+  
+  .header-stats {
+    display: none;
+  }
+  
+  .graph-view-overlay {
+    padding: 8px;
+  }
+  
+  .graph-view-container {
+    max-height: 100%;
+    border-radius: 8px;
+  }
+  
+  .backlinks-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Better touch targets */
+  .btn, .tree-file, .tree-folder-header, .backlink-item {
+    min-height: 44px;
+  }
+  
+  .sidebar-toggle {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 0 8px;
+    gap: 8px;
+  }
+  
+  .search-container {
+    max-width: 140px;
+  }
+  
+  .search-input {
+    font-size: 14px;
+    padding: 6px 0;
+  }
+  
+  .note-header h1 {
+    font-size: 1.25rem;
+  }
+  
+  .main-content {
+    padding: 12px;
+  }
+  
+  .markdown-body {
+    font-size: 15px;
+  }
+}
+
+/* Tablet landscape */
+@media (min-width: 769px) and (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+  
+  .main-content {
+    padding: 24px;
   }
 }
