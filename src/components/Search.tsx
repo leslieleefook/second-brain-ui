@@ -57,6 +57,8 @@ export function Search({ files, onSelect }: SearchProps) {
   
   // Reset selection when results change
   useEffect(() => {
+    // This is intentional - reset selection when search results change
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- necessary for UX
     setSelectedIndex(0);
   }, [results]);
   

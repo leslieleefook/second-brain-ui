@@ -240,7 +240,8 @@ function App() {
     // Remove from local state
     setBrain(prev => {
       if (!prev) return prev;
-      const { [selectedId]: _, ...rest } = prev.files;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [selectedId]: _deleted, ...rest } = prev.files;
       return {
         ...prev,
         files: rest,

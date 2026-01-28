@@ -27,27 +27,31 @@ interface Link {
 export function GraphView({ files, linkIndex, selectedId, onSelect, onClose }: GraphViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [links, setLinks] = useState<Link[]>([]);
   const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragNode, setDragNode] = useState<Node | null>(null);
   const animationRef = useRef<number>(0);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
-  // Build graph data
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [links, setLinks] = useState<Link[]>([]);
+
+  // Build graph data - initialize node positions on mount/data change
   useEffect(() => {
     const fileList = Object.values(files);
     const nodeMap: Record<string, Node> = {};
     const linkList: Link[] = [];
     
-    // Create nodes
-    fileList.forEach(file => {
+    // Create nodes with seeded random positions based on id
+    fileList.forEach((file, index) => {
+      // Use deterministic positioning based on index to avoid Math.random in render
+      const angle = (index / fileList.length) * 2 * Math.PI;
+      const radius = Math.min(dimensions.width, dimensions.height) * 0.3;
       nodeMap[file.id] = {
         id: file.id,
         title: file.title,
-        x: Math.random() * dimensions.width,
-        y: Math.random() * dimensions.height,
+        x: dimensions.width / 2 + Math.cos(angle) * radius * (0.5 + (index % 3) * 0.25),
+        y: dimensions.height / 2 + Math.sin(angle) * radius * (0.5 + (index % 5) * 0.15),
         vx: 0,
         vy: 0,
         connections: file.wikiLinks.length + file.backlinks.length,
@@ -64,6 +68,7 @@ export function GraphView({ files, linkIndex, selectedId, onSelect, onClose }: G
       });
     });
     
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: initializing graph data from props
     setNodes(Object.values(nodeMap));
     setLinks(linkList);
   }, [files, linkIndex, dimensions]);
@@ -155,7 +160,7 @@ export function GraphView({ files, linkIndex, selectedId, onSelect, onClose }: G
     
     animationRef.current = requestAnimationFrame(simulate);
     return () => cancelAnimationFrame(animationRef.current);
-  }, [links, dimensions, dragNode]);
+  }, [links, dimensions, dragNode, nodes.length]);
 
   // Draw graph
   useEffect(() => {
